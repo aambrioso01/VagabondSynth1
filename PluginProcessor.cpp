@@ -1,10 +1,7 @@
 /*
   ==============================================================================
-
     This file was auto-generated!
-
     It contains the basic framework code for a JUCE plugin processor.
-
   ==============================================================================
 */
 
@@ -12,7 +9,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
+DirtyDistortionAudioProcessor::DirtyDistortionAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -21,38 +18,35 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       ),
-attackTime(0.1f),
-tree(*this, nullptr)
+                       )
 #endif
 {
-    NormalisableRange<float> attackParam (0.1f, 5000.0f);
-    
-    tree.createAndAddParameter("attack", "Attack", "Attack", attackParam, 0.1f, nullptr, nullptr);
-    
-    mySynth.clearVoices();
-    
-    for (int i = 0; i < 5; i++)
-    {
-        mySynth.addVoice(new SynthVoice());
-    }
-    
-    mySynth.clearSounds();
-    mySynth.addSound(new SynthSound());
-    
+    //JARVIS
+    state = new AudioProcessorValueTreeState(*this, nullptr);
+
+    state->createAndAddParameter("Drive", "Drive", "Drive", NormalisableRange<float>(0.f, 1.f, 0.001), 1.0, nullptr, nullptr );
+    state->createAndAddParameter("Range", "Range", "Range", NormalisableRange<float>(0.f, 3000.f, 0.001), 1.0, nullptr, nullptr);
+    state->createAndAddParameter("Blend", "Blend", "Blend", NormalisableRange<float>(0.f, 1.f, 0.001), 1.0, nullptr, nullptr);
+    state->createAndAddParameter("Volume", "Volume", "Volume", NormalisableRange<float>(0.f, 3.f, 0.001), 1.0, nullptr, nullptr);
+
+    state->state = ValueTree("Drive");
+    state->state = ValueTree("Range");
+    state->state = ValueTree("Blend");
+    state->state = ValueTree("Volume");
+
 }
 
-SynthFrameworkAudioProcessor::~SynthFrameworkAudioProcessor()
+DirtyDistortionAudioProcessor::~DirtyDistortionAudioProcessor()
 {
 }
 
 //==============================================================================
-const String SynthFrameworkAudioProcessor::getName() const
+const String DirtyDistortionAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool SynthFrameworkAudioProcessor::acceptsMidi() const
+bool DirtyDistortionAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -61,7 +55,7 @@ bool SynthFrameworkAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool SynthFrameworkAudioProcessor::producesMidi() const
+bool DirtyDistortionAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -70,7 +64,7 @@ bool SynthFrameworkAudioProcessor::producesMidi() const
    #endif
 }
 
-bool SynthFrameworkAudioProcessor::isMidiEffect() const
+bool DirtyDistortionAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -79,58 +73,50 @@ bool SynthFrameworkAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double SynthFrameworkAudioProcessor::getTailLengthSeconds() const
+double DirtyDistortionAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int SynthFrameworkAudioProcessor::getNumPrograms()
+int DirtyDistortionAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int SynthFrameworkAudioProcessor::getCurrentProgram()
+int DirtyDistortionAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void SynthFrameworkAudioProcessor::setCurrentProgram (int index)
+void DirtyDistortionAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String SynthFrameworkAudioProcessor::getProgramName (int index)
+const String DirtyDistortionAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void SynthFrameworkAudioProcessor::changeProgramName (int index, const String& newName)
+void DirtyDistortionAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
 //==============================================================================
-void SynthFrameworkAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void DirtyDistortionAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    
-    // prevents samples from previous key press from playing
-    ignoreUnused(samplesPerBlock);
-    
-    // in case sample rate changes unexpectedly, prevents crash
-    lastSampleRate = sampleRate;
-    mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
-    
 }
 
-void SynthFrameworkAudioProcessor::releaseResources()
+void DirtyDistortionAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool SynthFrameworkAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool DirtyDistortionAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
@@ -153,7 +139,7 @@ bool SynthFrameworkAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 }
 #endif
 
-void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void DirtyDistortionAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -174,54 +160,76 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
+    
+    //VALUES FOR LOOP
+    float drive = *state->getRawParameterValue("Drive");
+    float range = *state->getRawParameterValue("Range");
+    float blend = *state->getRawParameterValue("Blend");
+    float volume = *state->getRawParameterValue("Volume");
+    
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        float* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
-    }
-    
-    //AMBRIOSO attack slider
-    for (int i = 0; i < mySynth.getNumVoices(); i++)
-    {
-        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
+        //JARVIS AUDIO PROCESSING
+        for (int sample = 0; sample < buffer.getNumSamples(); sample++)
         {
-            //error: float to float pointer
-            //myVoice->getParam(tree.getRawParameterValue("attack"));
+            float cleanSig = *channelData;
+
+            *channelData *= drive * range;
+
+            *channelData = ((((2.f / float_Pi) * atan(*channelData) * blend) + (cleanSig * (1.f - blend))) / 2.f) * volume;
+
+            ++channelData;
         }
     }
-    
-    mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+}
+
+AudioProcessorValueTreeState& DirtyDistortionAudioProcessor::getState()
+{
+    return *state;
 }
 
 //==============================================================================
-bool SynthFrameworkAudioProcessor::hasEditor() const
+bool DirtyDistortionAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* SynthFrameworkAudioProcessor::createEditor()
+AudioProcessorEditor* DirtyDistortionAudioProcessor::createEditor()
 {
-    return new SynthFrameworkAudioProcessorEditor (*this);
+    return new DirtyDistortionAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void SynthFrameworkAudioProcessor::getStateInformation (MemoryBlock& destData)
+void DirtyDistortionAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+
+    //JARVIS
+    MemoryOutputStream stream(destData, false);
+    state->state.writeToStream(stream);
 }
 
-void SynthFrameworkAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void DirtyDistortionAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+
+    //JARVIS
+    ValueTree tree = ValueTree::readFromData(data, sizeInBytes);
+
+    if (tree.isValid())
+    {
+        state->state = tree;
+    }
 }
 
 //==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new SynthFrameworkAudioProcessor();
+    return new DirtyDistortionAudioProcessor();
 }

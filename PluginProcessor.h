@@ -1,28 +1,23 @@
 /*
   ==============================================================================
-
     This file was auto-generated!
-
     It contains the basic framework code for a JUCE plugin processor.
-
   ==============================================================================
 */
 
 #pragma once
 
-#include <JuceHeader.h>
-#include "SynthSound.h"
-#include "SynthVoice.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 
 //==============================================================================
 /**
 */
-class SynthFrameworkAudioProcessor  : public AudioProcessor
+class DirtyDistortionAudioProcessor  : public AudioProcessor
 {
 public:
     //==============================================================================
-    SynthFrameworkAudioProcessor();
-    ~SynthFrameworkAudioProcessor();
+    DirtyDistortionAudioProcessor();
+    ~DirtyDistortionAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -57,16 +52,14 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    float attackTime;
-    AudioProcessorValueTreeState tree;
-    
+    //JARVIS
+    AudioProcessorValueTreeState& getState();
+
 private:
-    //AMBRIOSO
-    Synthesiser mySynth;
-    SynthVoice* myVoice;
-    
-    double lastSampleRate;
+    //JARVIS
+    //SLIDERS 
+    ScopedPointer<AudioProcessorValueTreeState> state;
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthFrameworkAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DirtyDistortionAudioProcessor)
 };
