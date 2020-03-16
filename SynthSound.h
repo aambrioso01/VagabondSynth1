@@ -3,7 +3,7 @@
 
     SynthSound.h
     Created: 14 Mar 2020 1:31:50pm
-    Author:  AMBRIOSO
+    Author:  Windows
 
   ==============================================================================
 */
@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 
+//AMBRIOSO
 class SynthSound : public SynthesiserSound
 {
     public:

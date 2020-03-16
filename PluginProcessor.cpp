@@ -21,15 +21,9 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       ),
-attackTime(0.1f),
-tree(*this, nullptr)
+                       )
 #endif
 {
-    NormalisableRange<float> attackParam (0.1f, 5000.0f);
-    
-    tree.createAndAddParameter("attack", "Attack", "Attack", attackParam, 0.1f, nullptr, nullptr);
-    
     mySynth.clearVoices();
     
     for (int i = 0; i < 5; i++)
@@ -179,16 +173,6 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
-    }
-    
-    //AMBRIOSO attack slider
-    for (int i = 0; i < mySynth.getNumVoices(); i++)
-    {
-        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
-        {
-            //error: float to float pointer
-            //myVoice->getParam(tree.getRawParameterValue("attack"));
-        }
     }
     
     mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());

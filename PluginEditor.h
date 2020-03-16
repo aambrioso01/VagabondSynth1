@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "Oscillator.h"
 
 //==============================================================================
 /**
@@ -33,7 +34,7 @@ private:
     // access the processor object that created it.
     SynthFrameworkAudioProcessor& processor;
 
-    ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> sliderTree;
+    Oscillator oscGui;
     
     Slider attackSlider;
     
