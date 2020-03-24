@@ -25,13 +25,13 @@ Filter::Filter(SynthFrameworkAudioProcessor& p) : processor(p)
     filterTypeVal = new AudioProcessorValueTreeState::ComboBoxAttachment (processor.state, "filterType", filterMenu);
     
     filterCutoff.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    filterCutoff.setRange(20.0, 80000.0);
+    filterCutoff.setRange(20.0, 2000.0);
     filterCutoff.setValue(400.0);
     filterCutoff.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
     addAndMakeVisible(&filterCutoff);
     filterVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "filterCutoff", filterCutoff);
     // defines logarithmic increment
-    filterCutoff.setSkewFactorFromMidPoint(100.0);
+    filterCutoff.setSkewFactorFromMidPoint(800.0);
     
     filterRes.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     filterRes.setRange(1, 5);

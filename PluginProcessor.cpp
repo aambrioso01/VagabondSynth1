@@ -45,7 +45,7 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     state.createAndAddParameter("wavetype", "WaveType", "wavetype", waveTypeParam, 0, nullptr, nullptr);
     
     NormalisableRange<float> filterTypeVal(0, 1);
-    NormalisableRange<float> filterVal (20.0f, 8000.0f);
+    NormalisableRange<float> filterVal (20.0f, 2000.0f);
     NormalisableRange<float> resVal(1, 5);
     state.createAndAddParameter("filterType", "FilterType", "filterType", filterTypeVal, 0, nullptr, nullptr);
     state.createAndAddParameter("filterCutoff", "FilterCutoff", "filterCutoff", filterVal, 400.0f, nullptr, nullptr);
