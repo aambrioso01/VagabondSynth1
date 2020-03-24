@@ -21,9 +21,16 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+                    //AMBRIOSO
+                     attackTime(0.1f),
+                     state(*this, nullptr)
 #endif
 {
+    NormalisableRange<float> attackParam (0.1f, 5000.0f);
+    
+    state.createAndAddParameter("attack", "Attack", "Attack", attackParam, 0.1f, nullptr, nullptr);
+    
     mySynth.clearVoices();
     
     for (int i = 0; i < 5; i++)
@@ -149,6 +156,17 @@ bool SynthFrameworkAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 
 void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
+    for (int i = 0; i < mySynth.getNumVoices(); i++)
+    {
+        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
+        {
+            myVoice->getParam((state.getRawParameterValue("attack")));
+        }
+    }
+    
+    
+    
+    
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();

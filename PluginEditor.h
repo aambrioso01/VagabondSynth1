@@ -36,6 +36,8 @@ private:
 
     Oscillator oscGui;
     
+    ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> sliderTree;
+    
     Slider attackSlider;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthFrameworkAudioProcessorEditor)

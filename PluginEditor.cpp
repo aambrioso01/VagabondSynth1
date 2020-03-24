@@ -21,7 +21,7 @@ SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFra
     
     addAndMakeVisible(&oscGui);
     
-    /*
+    
     //AMBRIOSO
     attackSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
     attackSlider.setRange(0.1f, 5000.0f);
@@ -29,7 +29,8 @@ SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFra
     attackSlider.setTextBoxStyle(Slider::TextBoxBelow, true, 20.0, 10.0);
     attackSlider.addListener(this);
     addAndMakeVisible(&attackSlider);
-    */
+    
+    sliderTree = new AudioProcessorValueTreeState::SliderAttachment (processor.state, "attack", attackSlider);
     
 }
 
@@ -60,10 +61,13 @@ void SynthFrameworkAudioProcessorEditor::resized()
     oscGui.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
     
     //AMBRIOSO
-    //attackSlider.setBounds(10, 10, 20, 50);
+    attackSlider.setBounds(10, 10, 40, 100);
 }
 
 void SynthFrameworkAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
-
+    if (slider == &attackSlider)
+    {
+        processor.attackTime = attackSlider.getValue();
+    }
 }

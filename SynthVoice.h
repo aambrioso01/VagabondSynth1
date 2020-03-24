@@ -22,6 +22,11 @@ class SynthVoice : public SynthesiserVoice
         return dynamic_cast<SynthSound*>(sound) != nullptr;
     }
     
+    void getParam (std::atomic<float>* attack)
+    {
+        env1.setAttack(double(*attack));
+    }
+    
     /* What happens when a note is pressed */
     void startNote (int midiNoteNumber, float velocity, SynthesiserSound* sound, int currentPitchWheelPosition)
     {
@@ -53,7 +58,7 @@ class SynthVoice : public SynthesiserVoice
     
     void renderNextBlock (AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
     {
-        env1.setAttack(1000);
+        
         env1.setDecay(500);
         env1.setSustain(0.8);
         env1.setRelease(500);
