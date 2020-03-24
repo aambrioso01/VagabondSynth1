@@ -1,0 +1,46 @@
+/*
+  ==============================================================================
+
+    Envelope.h
+    Created: 23 Mar 2020 11:00:59pm
+    Author:  Windows
+
+  ==============================================================================
+*/
+
+#pragma once
+
+#include <JuceHeader.h>
+#include "PluginProcessor.h"
+
+//==============================================================================
+/*
+*/
+class Envelope    : public Component, public Slider::Listener
+{
+public:
+    Envelope(SynthFrameworkAudioProcessor&);
+    ~Envelope();
+
+    void paint (Graphics&) override;
+    void resized() override;
+    void sliderValueChanged (Slider* slider) override;
+
+private:
+    ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> attackVal;
+    ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> decayVal;
+    ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> sustainVal;
+    ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> releaseVal;
+    
+    Slider attackSlider;
+    Slider decaySlider;
+    Slider sustainSlider;
+    Slider releaseSlider;
+
+
+    // This reference is provided as a quick way for your editor to
+    // access the processor object that created it.
+    SynthFrameworkAudioProcessor& processor;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Envelope)
+};

@@ -13,11 +13,12 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Oscillator.h"
+#include "Envelope.h"
 
 //==============================================================================
 /**
 */
-class SynthFrameworkAudioProcessorEditor  : public AudioProcessorEditor, public Slider::Listener
+class SynthFrameworkAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     SynthFrameworkAudioProcessorEditor (SynthFrameworkAudioProcessor&);
@@ -26,8 +27,6 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-    
-    void sliderValueChanged (Slider* slider) override;
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -35,12 +34,7 @@ private:
     SynthFrameworkAudioProcessor& processor;
 
     Oscillator oscGui;
-    
-    // ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> attackTree;
-    // ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> releaseTree;
-    
-    // Slider attackSlider;
-    // Slider releaseSlider;
+    Envelope envGui;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthFrameworkAudioProcessorEditor)
 };

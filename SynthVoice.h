@@ -22,9 +22,11 @@ class SynthVoice : public SynthesiserVoice
         return dynamic_cast<SynthSound*>(sound) != nullptr;
     }
     
-    void getParam (std::atomic<float>* attack, std::atomic<float>* release)
+    void getParam (std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release)
     {
         env1.setAttack(double(*attack));
+        env1.setDecay(double(*decay));
+        env1.setSustain(double(*sustain));
         env1.setRelease(double(*release));
     }
 
@@ -88,9 +90,6 @@ class SynthVoice : public SynthesiserVoice
     
     void renderNextBlock (AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
     {
-        
-        env1.setDecay(500);
-        env1.setSustain(1);
        
         for (int sample = 0; sample < numSamples; ++ sample)
         {

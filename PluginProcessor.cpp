@@ -24,16 +24,22 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
                        ),
                     //AMBRIOSO
                      attackTime(0.1f),
+                     decayTime(0.1f),
+                     sustainTime(0.1f),
                      releaseTime(0.1f),
                      state(*this, nullptr)
 #endif
 {
-    NormalisableRange<float> attackParam (0.1f, 4000.0f);
-    NormalisableRange<float> releaseParam(0.1f, 10000.0f);
+    NormalisableRange<float> attackParam (0.1f, 5000.0f);
+    NormalisableRange<float> decayParam(1.0f, 2000.0f);
+    NormalisableRange<float> sustainParam (0.1f, 1.0f);
+    NormalisableRange<float> releaseParam(0.1f, 5000.0f);
     
     NormalisableRange<float> waveTypeParam(0, 2);
     
     state.createAndAddParameter("attack", "Attack", "Attack", attackParam, 0.1f, nullptr, nullptr);
+    state.createAndAddParameter("decay", "Decay", "Decay", decayParam, 0.1f, nullptr, nullptr);
+    state.createAndAddParameter("sustain", "Sustain", "Sustain", sustainParam, 0.1f, nullptr, nullptr);
     state.createAndAddParameter("release", "Release", "Release", releaseParam, 0.1f, nullptr, nullptr);
     
     state.createAndAddParameter("wavetype", "WaveType", "wavetype", waveTypeParam, 0, nullptr, nullptr);
@@ -167,7 +173,7 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     {
         if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
         {
-            myVoice->getParam(state.getRawParameterValue("attack"), state.getRawParameterValue("release"));
+            myVoice->getParam(state.getRawParameterValue("attack"), state.getRawParameterValue("decay"), state.getRawParameterValue("sustain"), state.getRawParameterValue("release"));
             
             myVoice->getOscType(state.getRawParameterValue("wavetype"));
         }
