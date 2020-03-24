@@ -35,14 +35,22 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     NormalisableRange<float> sustainParam (0.1f, 1.0f);
     NormalisableRange<float> releaseParam(0.1f, 5000.0f);
     
-    NormalisableRange<float> waveTypeParam(0, 2);
     
     state.createAndAddParameter("attack", "Attack", "Attack", attackParam, 0.1f, nullptr, nullptr);
     state.createAndAddParameter("decay", "Decay", "Decay", decayParam, 0.1f, nullptr, nullptr);
     state.createAndAddParameter("sustain", "Sustain", "Sustain", sustainParam, 0.1f, nullptr, nullptr);
     state.createAndAddParameter("release", "Release", "Release", releaseParam, 0.1f, nullptr, nullptr);
     
+    NormalisableRange<float> waveTypeParam(0, 2);
     state.createAndAddParameter("wavetype", "WaveType", "wavetype", waveTypeParam, 0, nullptr, nullptr);
+    
+    NormalisableRange<float> filterTypeVal(0, 1);
+    NormalisableRange<float> filterVal (20.0f, 8000.0f);
+    NormalisableRange<float> resVal(1, 5);
+    state.createAndAddParameter("filterType", "FilterType", "filterType", filterTypeVal, 0, nullptr, nullptr);
+    state.createAndAddParameter("filterCutoff", "FilterCutoff", "filterCutoff", filterVal, 400.0f, nullptr, nullptr);
+    state.createAndAddParameter("filterRes", "FilterRes", "filterRes", resVal, 1, nullptr, nullptr);
+    
     
     mySynth.clearVoices();
     
@@ -173,9 +181,11 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     {
         if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
         {
-            myVoice->getParam(state.getRawParameterValue("attack"), state.getRawParameterValue("decay"), state.getRawParameterValue("sustain"), state.getRawParameterValue("release"));
+            myVoice->getEnvelopeParams(state.getRawParameterValue("attack"), state.getRawParameterValue("decay"), state.getRawParameterValue("sustain"), state.getRawParameterValue("release"));
             
             myVoice->getOscType(state.getRawParameterValue("wavetype"));
+            
+            myVoice->getFilterParams(state.getRawParameterValue("filterType"), state.getRawParameterValue("filterCutoff"), state.getRawParameterValue("filterRes"));
         }
     }
     

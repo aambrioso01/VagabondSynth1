@@ -22,17 +22,29 @@ class SynthVoice : public SynthesiserVoice
         return dynamic_cast<SynthSound*>(sound) != nullptr;
     }
     
-    void getParam (std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release)
+    void getEnvelopeParams (std::atomic<float>* attack, std::atomic<float>* decay, std::atomic<float>* sustain, std::atomic<float>* release)
     {
         env1.setAttack(double(*attack));
         env1.setDecay(double(*decay));
         env1.setSustain(double(*sustain));
         env1.setRelease(double(*release));
     }
+    
+    double setEnvelope ()
+    {
+        return env1.adsr(setOscType(), env1.trigger);
+    }
 
     void getOscType (std::atomic<float>* selection)
     {
         theWave = *selection;
+    }
+    
+    void getFilterParams (std::atomic<float>* filterType, std::atomic<float>* filterCutoff, std::atomic<float>* filterRes)
+    {
+        filterChoice = *filterType;
+        cutoff = *filterCutoff;
+        resonance = *filterRes;
     }
     
     double setOscType ()
@@ -57,6 +69,31 @@ class SynthVoice : public SynthesiserVoice
             return osc1.sinewave(frequency);
         }
             
+    }
+    
+    double setFilter ()
+    {
+        if (filterChoice == 0)
+        {
+            return filter1.lores(setEnvelope(), cutoff, resonance);
+        }
+        
+        if (filterChoice == 1)
+        {
+            return filter1.hires(setEnvelope(), cutoff, resonance);
+        }
+        
+        /* maxilimain band pass needs work
+        if (filterChoice == 2)
+        {
+            return filter1.bandpass(setEnvelope(), cutoff, resonance);
+        }
+        */
+        
+        else
+        {
+            return filter1.lores(setEnvelope(), cutoff, resonance);
+        }
     }
     
     /* What happens when a note is pressed */
@@ -93,12 +130,10 @@ class SynthVoice : public SynthesiserVoice
        
         for (int sample = 0; sample < numSamples; ++ sample)
         {
-            //double theWave = osc1.sinewave(frequency);
-            double theSound = env1.adsr(setOscType(), env1.trigger) * level;
             
             for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
             {
-                    outputBuffer.addSample(channel, startSample, theSound);
+                    outputBuffer.addSample(channel, startSample, setFilter() * 0.3f);
             }
             
             ++startSample;
@@ -113,7 +148,12 @@ class SynthVoice : public SynthesiserVoice
         double frequency;
         int theWave;
         
+        int filterChoice;
+        float cutoff;
+        float resonance;
+        
         maxiOsc osc1;
         maxiEnv env1;
+        maxiFilter filter1;
 
 };

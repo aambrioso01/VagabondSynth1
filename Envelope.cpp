@@ -24,28 +24,24 @@ Envelope::Envelope(SynthFrameworkAudioProcessor& p) : processor(p)
     attackSlider.setRange(0.1f, 5000.0f);
     attackSlider.setValue(0.1f);
     attackSlider.setTextBoxStyle(Slider::TextBoxBelow, true, 20.0, 10.0);
-    attackSlider.addListener(this);
     addAndMakeVisible(&attackSlider);
     
     decaySlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
     decaySlider.setRange(1.0f, 2000.0f);
     decaySlider.setValue(1.0f);
     decaySlider.setTextBoxStyle(Slider::TextBoxBelow, true, 20.0, 10.0);
-    decaySlider.addListener(this);
     addAndMakeVisible(&decaySlider);
     
     sustainSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
     sustainSlider.setRange(0.1f, 1.0f);
     sustainSlider.setValue(0.8f);
     sustainSlider.setTextBoxStyle(Slider::TextBoxBelow, true, 20.0, 10.0);
-    sustainSlider.addListener(this);
     addAndMakeVisible(&sustainSlider);
     
     releaseSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
     releaseSlider.setRange(0.1f, 5000.0f);
     releaseSlider.setValue(0.8f);
     releaseSlider.setTextBoxStyle(Slider::TextBoxBelow, true, 20.0, 10.0);
-    releaseSlider.addListener(this);
     addAndMakeVisible(&releaseSlider);
     
     
@@ -61,38 +57,34 @@ Envelope::~Envelope()
 }
 
 void Envelope::paint (Graphics& g)
-{
-    g.fillAll(Colours::white);
+{   
+    Rectangle<int> titleArea (0, 10, getWidth(), 20);
+    
+    g.fillAll(Colours::black);
+    g.setColour(Colours::white);
+    g.drawText("Envelope", titleArea, Justification::centredTop);
+    
+    g.drawText("A", 53, 150, 20, 20, Justification::centredTop);
+    g.drawText("D", 77, 150, 20, 20, Justification::centredTop);
+    g.drawText("S", 103, 150, 20, 20, Justification::centredTop);
+    g.drawText("R", 128, 150, 20, 20, Justification::centredTop);
+    
+    Rectangle <float> area (25, 25, 150, 150);
+    
+    g.setColour(Colours::yellow);
+    g.drawRoundedRectangle(area, 20.0f, 2.0f);
 }
 
 void Envelope::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
+{   
+    Rectangle<int> area = getLocalBounds().reduced(50);
     
+    int sliderWidth = 25;
+    int sliderHeight = 175;
     
-    Rectangle<int> area = getLocalBounds().reduced(40);
-    
-    //AMBRIOSO
-    attackSlider.setBounds(10, 10, 40, 100);
-    decaySlider.setBounds(60, 10, 40, 100);
-    sustainSlider.setBounds(110, 10, 40, 100);
-    releaseSlider.setBounds(160, 10, 40, 100);
+    attackSlider.setBounds(area.removeFromLeft(sliderWidth).removeFromTop(sliderHeight).withTrimmedTop(10));
+    decaySlider.setBounds(area.removeFromLeft(sliderWidth).removeFromTop(sliderHeight).withTrimmedTop(10));
+    sustainSlider.setBounds(area.removeFromLeft(sliderWidth).removeFromTop(sliderHeight).withTrimmedTop(10));
+    releaseSlider.setBounds(area.removeFromLeft(sliderWidth).removeFromTop(sliderHeight).withTrimmedTop(10));
 
-}
-
-
-void Envelope::sliderValueChanged(Slider* slider)
-{
-    /*
-    if (slider == &attackSlider)
-    {
-        processor.attackTime = attackSlider.getValue();
-    }
-    
-    if (slider == &releaseSlider)
-    {
-        processor.releaseTime = releaseSlider.getValue();
-    }
-    */
 }

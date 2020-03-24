@@ -16,7 +16,7 @@
 //==============================================================================
 /*
 */
-class Envelope    : public Component, public Slider::Listener
+class Envelope    : public Component
 {
 public:
     Envelope(SynthFrameworkAudioProcessor&);
@@ -24,7 +24,6 @@ public:
 
     void paint (Graphics&) override;
     void resized() override;
-    void sliderValueChanged (Slider* slider) override;
 
 private:
     ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> attackVal;
