@@ -13,7 +13,7 @@
 
 //==============================================================================
 SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFrameworkAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+    : AudioProcessorEditor (&p), processor (p), oscGui(p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -21,7 +21,7 @@ SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFra
     
     addAndMakeVisible(&oscGui);
     
-    
+    /*
     //AMBRIOSO
     attackSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
     attackSlider.setRange(0.1f, 5000.0f);
@@ -30,7 +30,17 @@ SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFra
     attackSlider.addListener(this);
     addAndMakeVisible(&attackSlider);
     
-    sliderTree = new AudioProcessorValueTreeState::SliderAttachment (processor.state, "attack", attackSlider);
+    releaseSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
+    releaseSlider.setRange(0.1f, 1000.0f);
+    releaseSlider.setValue(0.1f);
+    releaseSlider.setTextBoxStyle(Slider::TextBoxBelow, true, 20.0, 10.0);
+    releaseSlider.addListener(this);
+    addAndMakeVisible(&releaseSlider);
+    
+    
+    attackTree = new AudioProcessorValueTreeState::SliderAttachment (processor.state, "attack", attackSlider);
+    releaseTree = new AudioProcessorValueTreeState::SliderAttachment (processor.state, "release", attackSlider);
+    */
     
 }
 
@@ -59,15 +69,24 @@ void SynthFrameworkAudioProcessorEditor::resized()
     const int componentHeight = 200;
     
     oscGui.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
-    
+    /*
     //AMBRIOSO
     attackSlider.setBounds(10, 10, 40, 100);
+    releaseSlider.setBounds(60, 10, 40, 100);
+    */
 }
 
 void SynthFrameworkAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
+    /*
     if (slider == &attackSlider)
     {
         processor.attackTime = attackSlider.getValue();
     }
+    
+    if (slider == &releaseSlider)
+    {
+        processor.releaseTime = releaseSlider.getValue();
+    }
+    */
 }

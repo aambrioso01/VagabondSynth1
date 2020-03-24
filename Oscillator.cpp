@@ -11,7 +11,7 @@
 #include <JuceHeader.h>
 #include "Oscillator.h"
 
-Oscillator::Oscillator()
+Oscillator::Oscillator(SynthFrameworkAudioProcessor& p) : processor(p)
 {
     setSize(200, 200);
     
@@ -23,6 +23,8 @@ Oscillator::Oscillator()
     oscMenu.addListener(this);
     
     oscMenu.setJustificationType(Justification::centred);
+    
+    waveSelection = new AudioProcessorValueTreeState::ComboBoxAttachment (processor.state, "wavetype", oscMenu);
 }
 
 Oscillator::~Oscillator()

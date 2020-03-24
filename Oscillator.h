@@ -11,13 +11,14 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "PluginProcessor.h"
 
 class Oscillator : public Component, private ComboBox::Listener
 
 {
 public:
 
-    Oscillator();
+    Oscillator(SynthFrameworkAudioProcessor&);
     ~Oscillator();
 
     void paint (Graphics&) override;
@@ -27,5 +28,11 @@ public:
     
 private:
     ComboBox oscMenu;
+    
+    ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> waveSelection;
+    
+    // This reference is provided as a quick way for your editor to
+    // access the processor object that created it.
+    SynthFrameworkAudioProcessor& processor;
     
 };

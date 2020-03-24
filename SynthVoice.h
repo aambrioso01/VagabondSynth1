@@ -22,9 +22,39 @@ class SynthVoice : public SynthesiserVoice
         return dynamic_cast<SynthSound*>(sound) != nullptr;
     }
     
-    void getParam (std::atomic<float>* attack)
+    void getParam (std::atomic<float>* attack, std::atomic<float>* release)
     {
         env1.setAttack(double(*attack));
+        env1.setRelease(double(*release));
+    }
+
+    void getOscType (std::atomic<float>* selection)
+    {
+        theWave = *selection;
+    }
+    
+    double setOscType ()
+    {
+        if (theWave == 0)
+        {
+            return osc1.sinewave(frequency);
+        }
+        
+        if (theWave == 1)
+        {
+            return osc1.saw(frequency);
+        }
+        
+        if (theWave == 2)
+        {
+            return osc1.square(frequency);
+        }
+        
+        else
+        {
+            return osc1.sinewave(frequency);
+        }
+            
     }
     
     /* What happens when a note is pressed */
@@ -60,13 +90,12 @@ class SynthVoice : public SynthesiserVoice
     {
         
         env1.setDecay(500);
-        env1.setSustain(0.8);
-        env1.setRelease(500);
+        env1.setSustain(1);
        
         for (int sample = 0; sample < numSamples; ++ sample)
         {
-            double theWave = osc1.sinewave(frequency);
-            double theSound = env1.adsr(theWave, env1.trigger) * level;
+            //double theWave = osc1.sinewave(frequency);
+            double theSound = env1.adsr(setOscType(), env1.trigger) * level;
             
             for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
             {
@@ -83,6 +112,7 @@ class SynthVoice : public SynthesiserVoice
         
         double level;
         double frequency;
+        int theWave;
         
         maxiOsc osc1;
         maxiEnv env1;

@@ -58,6 +58,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
     
     float attackTime;
+    float releaseTime;
     AudioProcessorValueTreeState state;
 
 private:

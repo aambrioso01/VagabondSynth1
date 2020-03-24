@@ -36,9 +36,11 @@ private:
 
     Oscillator oscGui;
     
-    ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> sliderTree;
+    // ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> attackTree;
+    // ScopedPointer <AudioProcessorValueTreeState::SliderAttachment> releaseTree;
     
-    Slider attackSlider;
+    // Slider attackSlider;
+    // Slider releaseSlider;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthFrameworkAudioProcessorEditor)
 };
