@@ -36,19 +36,19 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     NormalisableRange<float> releaseParam(0.1f, 5000.0f);
     
     
-    state.createAndAddParameter("attack", "Attack", "Attack", attackParam, 0.1f, nullptr, nullptr);
-    state.createAndAddParameter("decay", "Decay", "Decay", decayParam, 0.1f, nullptr, nullptr);
-    state.createAndAddParameter("sustain", "Sustain", "Sustain", sustainParam, 0.1f, nullptr, nullptr);
-    state.createAndAddParameter("release", "Release", "Release", releaseParam, 0.1f, nullptr, nullptr);
+    state.createAndAddParameter("attack", "Attack", "Attack", attackParam, 1200.0f, nullptr, nullptr);
+    state.createAndAddParameter("decay", "Decay", "Decay", decayParam, 1000.0f, nullptr, nullptr);
+    state.createAndAddParameter("sustain", "Sustain", "Sustain", sustainParam, 0.5f, nullptr, nullptr);
+    state.createAndAddParameter("release", "Release", "Release", releaseParam, 1200.0f, nullptr, nullptr);
     
-    NormalisableRange<float> waveTypeParam(0, 2);
+    NormalisableRange<float> waveTypeParam(0, 5);
     state.createAndAddParameter("wavetype", "WaveType", "wavetype", waveTypeParam, 0, nullptr, nullptr);
     
-    NormalisableRange<float> filterTypeVal(0, 1);
+    NormalisableRange<float> filterTypeVal(0, 2);
     NormalisableRange<float> filterVal (20.0f, 2000.0f);
     NormalisableRange<float> resVal(1, 5);
     state.createAndAddParameter("filterType", "FilterType", "filterType", filterTypeVal, 0, nullptr, nullptr);
-    state.createAndAddParameter("filterCutoff", "FilterCutoff", "filterCutoff", filterVal, 400.0f, nullptr, nullptr);
+    state.createAndAddParameter("filterCutoff", "FilterCutoff", "filterCutoff", filterVal, 2000.0f, nullptr, nullptr);
     state.createAndAddParameter("filterRes", "FilterRes", "filterRes", resVal, 1, nullptr, nullptr);
     
     
@@ -143,6 +143,17 @@ void SynthFrameworkAudioProcessor::prepareToPlay (double sampleRate, int samples
     lastSampleRate = sampleRate;
     mySynth.setCurrentPlaybackSampleRate(lastSampleRate);
     
+    
+    // for dsp filter module
+    dsp::ProcessSpec spec;
+    spec.sampleRate = lastSampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
+    
+    stateVariableFilter.reset();
+    stateVariableFilter.prepare(spec);
+    updateFilter();
+    
 }
 
 void SynthFrameworkAudioProcessor::releaseResources()
@@ -174,6 +185,32 @@ bool SynthFrameworkAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
   #endif
 }
 #endif
+
+// what happens for each type of filter
+void SynthFrameworkAudioProcessor::updateFilter()
+{
+    int menuChoice = *state.getRawParameterValue("filterType");
+    int freq = *state.getRawParameterValue("filterCutoff");
+    int res = *state.getRawParameterValue("filterRes");
+    
+    if (menuChoice == 0)
+    {
+        stateVariableFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+        stateVariableFilter.state->setCutOffFrequency(lastSampleRate, freq, res);
+    }
+    
+    if (menuChoice == 1)
+    {
+        stateVariableFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;
+        stateVariableFilter.state->setCutOffFrequency(lastSampleRate, freq, res);
+    }
+    
+    if (menuChoice == 2)
+    {
+        stateVariableFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::bandPass;
+        stateVariableFilter.state->setCutOffFrequency(lastSampleRate, freq, res);
+    }
+}
 
 void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
@@ -219,6 +256,9 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     }
     
     mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    updateFilter();
+    dsp::AudioBlock<float> block (buffer);
+    stateVariableFilter.process(dsp::ProcessContextReplacing<float> (block));
 }
 
 //==============================================================================

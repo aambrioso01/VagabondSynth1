@@ -18,7 +18,7 @@ Filter::Filter(SynthFrameworkAudioProcessor& p) : processor(p)
     
     filterMenu.addItem("Low Pass", 1);
     filterMenu.addItem("High Pass", 2);
-    //filterMenu.addItem("Band Pass", 3);
+    filterMenu.addItem("Band Pass", 3);
     filterMenu.setJustificationType(Justification::centred);
     addAndMakeVisible(&filterMenu);
     

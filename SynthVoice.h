@@ -64,12 +64,35 @@ class SynthVoice : public SynthesiserVoice
             return osc1.square(frequency);
         }
         
+        // combo oscillators need work, sounds bad
+        if (theWave == 3)
+        {
+            double sinSquare;
+            sinSquare = (osc1.sinewave(frequency) + osc1.square(frequency)) / 2;
+            return sinSquare;
+        }
+        
+        if (theWave == 4)
+        {
+            double sinSaw;
+            sinSaw = (osc1.sinewave(frequency) + osc1.saw(frequency)) / 2;
+            return sinSaw;
+        }
+        
+        if (theWave == 5)
+        {
+            double sawSquare;
+            sawSquare = (osc1.saw(frequency) + osc1.square(frequency)) / 2;
+            return sawSquare;
+        }
+            
         else
         {
             return osc1.sinewave(frequency);
         }
             
     }
+    /* Maximilian filters, not stable
     
     double setFilter ()
     {
@@ -83,18 +106,19 @@ class SynthVoice : public SynthesiserVoice
             return filter1.hires(setEnvelope(), cutoff, resonance);
         }
         
-        /* maxilimain band pass needs work
+        maxilimain band pass needs work
         if (filterChoice == 2)
         {
             return filter1.bandpass(setEnvelope(), cutoff, resonance);
         }
-        */
+        
         
         else
         {
             return filter1.lores(setEnvelope(), cutoff, resonance);
         }
     }
+    */
     
     /* What happens when a note is pressed */
     void startNote (int midiNoteNumber, float velocity, SynthesiserSound* sound, int currentPitchWheelPosition)
@@ -117,7 +141,7 @@ class SynthVoice : public SynthesiserVoice
     /* What happens when the pitch wheel changes position */
     void pitchWheelMoved (int newPitchWheelValue)
     {
-        
+        frequency = frequency + 50.0;
     }
     
     void controllerMoved (int controllerNumber, int newControllerValue)
@@ -133,7 +157,7 @@ class SynthVoice : public SynthesiserVoice
             
             for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
             {
-                    outputBuffer.addSample(channel, startSample, setFilter() * 0.3f);
+                    outputBuffer.addSample(channel, startSample, setEnvelope() * 0.3f);
             }
             
             ++startSample;
@@ -154,6 +178,6 @@ class SynthVoice : public SynthesiserVoice
         
         maxiOsc osc1;
         maxiEnv env1;
-        maxiFilter filter1;
+        //maxiFilter filter1;
 
 };

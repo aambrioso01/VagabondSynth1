@@ -18,6 +18,10 @@ Oscillator::Oscillator(SynthFrameworkAudioProcessor& p) : processor(p)
     oscMenu.addItem("Sine", 1);
     oscMenu.addItem("Saw", 2);
     oscMenu.addItem("Square", 3);
+    oscMenu.addItem("Sine&Square", 4);
+    oscMenu.addItem("Sine&Saw", 5);
+    oscMenu.addItem("Saw&Square", 6);
+    
     
     addAndMakeVisible(&oscMenu);
     oscMenu.addListener(this);
