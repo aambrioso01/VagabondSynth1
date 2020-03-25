@@ -29,6 +29,16 @@ Oscillator::Oscillator(SynthFrameworkAudioProcessor& p) : processor(p)
     oscMenu.setJustificationType(Justification::centred);
     
     waveSelection = new AudioProcessorValueTreeState::ComboBoxAttachment (processor.state, "wavetype", oscMenu);
+    
+    
+    //volume knob
+    midiVolume.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    midiVolume.setRange(0.0, 127.0, 1.0);
+    midiVolume.setTextBoxStyle (Slider::NoTextBox, false, 90, 0);
+    midiVolume.setPopupDisplayEnabled (true, false, this);
+    midiVolume.setValue(1.0);
+    addAndMakeVisible (&midiVolume);
+    volVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "volume", midiVolume);
 }
 
 Oscillator::~Oscillator()
@@ -46,6 +56,7 @@ void Oscillator::resized()
     Rectangle<int> area = getLocalBounds().reduced(40);
     
     oscMenu.setBounds(area.removeFromTop(20));
+    midiVolume.setBounds (area.removeFromTop(100));
 }
 
 void Oscillator::comboBoxChanged(ComboBox* box)

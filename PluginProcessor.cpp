@@ -30,6 +30,7 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
                      state(*this, nullptr)
 #endif
 {
+    // ADSR sliders
     NormalisableRange<float> attackParam (0.1f, 5000.0f);
     NormalisableRange<float> decayParam(1.0f, 2000.0f);
     NormalisableRange<float> sustainParam (0.1f, 1.0f);
@@ -41,9 +42,12 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     state.createAndAddParameter("sustain", "Sustain", "Sustain", sustainParam, 0.5f, nullptr, nullptr);
     state.createAndAddParameter("release", "Release", "Release", releaseParam, 1200.0f, nullptr, nullptr);
     
+    
+    // Wave type combobox
     NormalisableRange<float> waveTypeParam(0, 5);
     state.createAndAddParameter("wavetype", "WaveType", "wavetype", waveTypeParam, 0, nullptr, nullptr);
     
+    // filter/resonance sliders
     NormalisableRange<float> filterTypeVal(0, 2);
     NormalisableRange<float> filterVal (20.0f, 2000.0f);
     NormalisableRange<float> resVal(1, 5);
@@ -51,6 +55,9 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     state.createAndAddParameter("filterCutoff", "FilterCutoff", "filterCutoff", filterVal, 2000.0f, nullptr, nullptr);
     state.createAndAddParameter("filterRes", "FilterRes", "filterRes", resVal, 1, nullptr, nullptr);
     
+    // volume slider
+    NormalisableRange<float> volVal(0.0, 127.0);
+    state.createAndAddParameter("volume", "Volume", "volume", volVal, 0, nullptr, nullptr);
     
     mySynth.clearVoices();
     
@@ -213,22 +220,7 @@ void SynthFrameworkAudioProcessor::updateFilter()
 }
 
 void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
-{
-    for (int i = 0; i < mySynth.getNumVoices(); i++)
-    {
-        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
-        {
-            myVoice->getEnvelopeParams(state.getRawParameterValue("attack"), state.getRawParameterValue("decay"), state.getRawParameterValue("sustain"), state.getRawParameterValue("release"));
-            
-            myVoice->getOscType(state.getRawParameterValue("wavetype"));
-            
-            myVoice->getFilterParams(state.getRawParameterValue("filterType"), state.getRawParameterValue("filterCutoff"), state.getRawParameterValue("filterRes"));
-        }
-    }
-    
-    
-    
-    
+{    
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -242,19 +234,42 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+        
+
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
+
+    rawVolume = 0.015;
+    
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        float* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        {
+            channelData[sample] = buffer.getSample(channel, sample) * rawVolume;
+        }
     }
     
+    for (int i = 0; i < mySynth.getNumVoices(); i++)
+    {
+        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
+        {
+            myVoice->getEnvelopeParams(state.getRawParameterValue("attack"), state.getRawParameterValue("decay"), state.getRawParameterValue("sustain"), state.getRawParameterValue("release"));
+            
+            myVoice->getOscType(state.getRawParameterValue("wavetype"));
+            
+            myVoice->getOscVolume(state.getRawParameterValue("volume"), midiMessages);
+            
+            myVoice->getFilterParams(state.getRawParameterValue("filterType"), state.getRawParameterValue("filterCutoff"), state.getRawParameterValue("filterRes"));
+        }
+    }
+    
+    //oscillator next block
     mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
     updateFilter();
     dsp::AudioBlock<float> block (buffer);

@@ -14,7 +14,6 @@
 #include "PluginProcessor.h"
 
 class Oscillator : public Component, private ComboBox::Listener
-
 {
 public:
 
@@ -28,8 +27,10 @@ public:
     
 private:
     ComboBox oscMenu;
-    
     ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> waveSelection;
+
+    Slider midiVolume;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> volVal;
     
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

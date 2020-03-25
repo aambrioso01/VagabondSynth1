@@ -62,7 +62,9 @@ public:
     float sustainTime;
     float releaseTime;
     
+    //AMBRIOSO
     void updateFilter();
+    float noteOnVel;
     
     AudioProcessorValueTreeState state;
 
@@ -70,6 +72,8 @@ private:
     //AMBRIOSO
     Synthesiser mySynth;
     SynthVoice* myVoice;
+    
+    double rawVolume;
     
     dsp::ProcessorDuplicator<dsp::StateVariableFilter::Filter<float> , dsp::StateVariableFilter::Parameters<float>> stateVariableFilter;
     

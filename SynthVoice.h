@@ -47,6 +47,37 @@ class SynthVoice : public SynthesiserVoice
         resonance = *filterRes;
     }
     
+    void getOscVolume (std::atomic<float>* volume, MidiBuffer& midiMessages)
+    {
+        /* append our modified MIDI signals to this new buffer before swapping it with the original
+        MidiBuffer processedMidi;
+        int time;
+        MidiMessage m;
+ 
+        for (MidiBuffer::Iterator i (midiMessages); i.getNextEvent (m, time);)
+        {
+            if (m.isNoteOn())
+            {
+                uint8 newVel = (uint8)noteOnVel;
+                m = MidiMessage::noteOn(m.getChannel(), m.getNoteNumber(), newVel);
+            }
+            else if (m.isNoteOff())
+            {
+            }
+            else if (m.isAftertouch())
+            {
+            }
+            else if (m.isPitchWheel())
+            {
+            }
+    
+            processedMidi.addEvent (m, time);
+        }
+ 
+        midiMessages.swapWith (processedMidi);
+        */
+    }
+    
     double setOscType ()
     {
         if (theWave == 0)
@@ -67,23 +98,17 @@ class SynthVoice : public SynthesiserVoice
         // combo oscillators need work, sounds bad
         if (theWave == 3)
         {
-            double sinSquare;
-            sinSquare = (osc1.sinewave(frequency) + osc1.square(frequency)) / 2;
-            return sinSquare;
+            return osc1.sinSquare(frequency);
         }
         
         if (theWave == 4)
         {
-            double sinSaw;
-            sinSaw = (osc1.sinewave(frequency) + osc1.saw(frequency)) / 2;
-            return sinSaw;
+            return osc1.sinSaw(frequency);
         }
         
         if (theWave == 5)
         {
-            double sawSquare;
-            sawSquare = (osc1.saw(frequency) + osc1.square(frequency)) / 2;
-            return sawSquare;
+            return osc1.sawSquare(frequency);
         }
             
         else
