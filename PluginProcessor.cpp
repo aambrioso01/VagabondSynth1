@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -56,8 +46,8 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     state.createAndAddParameter("filterRes", "FilterRes", "filterRes", resVal, 1, nullptr, nullptr);
     
     // volume slider
-    NormalisableRange<float> volVal(0.0, 127.0);
-    state.createAndAddParameter("volume", "Volume", "volume", volVal, 0, nullptr, nullptr);
+    NormalisableRange<float> volVal(0.0, 1.0);
+    state.createAndAddParameter("volume", "Volume", "volume", volVal, 0.5, nullptr, nullptr);
     
     mySynth.clearVoices();
     
@@ -220,11 +210,14 @@ void SynthFrameworkAudioProcessor::updateFilter()
 }
 
 void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
-{    
+{
+    
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+    rawVolume = 0.015;
+    
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -242,8 +235,6 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-
-    rawVolume = 0.015;
     
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {

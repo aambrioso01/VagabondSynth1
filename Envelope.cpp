@@ -1,25 +1,11 @@
-/*
-  ==============================================================================
-
-    Envelope.cpp
-    Created: 23 Mar 2020 11:00:59pm
-    Author:  Windows
-
-  ==============================================================================
-*/
-
 #include <JuceHeader.h>
 #include "Envelope.h"
 
 //==============================================================================
 Envelope::Envelope(SynthFrameworkAudioProcessor& p) : processor(p)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-    
     setSize(200,200);
     
-    //AMBRIOSO
     attackSlider.setSliderStyle(Slider::SliderStyle::LinearVertical);
     attackSlider.setRange(0.1f, 5000.0f);
     attackSlider.setValue(0.1f);

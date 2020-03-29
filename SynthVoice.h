@@ -1,17 +1,7 @@
-/*
-  ==============================================================================
-
-    SynthVoice.h
-    Created: 14 Mar 2020 1:32:05pm
-    Author:  Windows
-
-  ==============================================================================
-*/
-
 #pragma once
 #include <JuceHeader.h>
 #include "SynthSound.h"
-#include "src\maximilian.h"
+#include "src/maximilian.h"
 
 class SynthVoice : public SynthesiserVoice
 {
@@ -49,6 +39,36 @@ class SynthVoice : public SynthesiserVoice
     
     void getOscVolume (std::atomic<float>* volume, MidiBuffer& midiMessages)
     {
+        newVol = *volume;
+        
+        processedBuffer.clear();
+
+        MidiBuffer::Iterator it(midiMessages);
+        MidiMessage currentMessage;
+        int samplePos;
+        
+        while(it.getNextEvent(currentMessage, samplePos))
+		{
+			if (currentMessage.isNoteOn())
+			{
+				currentMessage = MidiMessage::noteOn(currentMessage.getChannel(), currentMessage.getNoteNumber(), newVol);
+			}
+			else if (currentMessage.isNoteOff())
+			{
+			}
+			else if (currentMessage.isAftertouch())
+			{
+			}
+			else if (currentMessage.isPitchWheel())
+			{
+			}
+
+			processedBuffer.addEvent(currentMessage, samplePos);
+		}
+
+       midiMessages.swapWith(processedBuffer);
+
+        
         /* append our modified MIDI signals to this new buffer before swapping it with the original
         MidiBuffer processedMidi;
         int time;
@@ -166,6 +186,7 @@ class SynthVoice : public SynthesiserVoice
     /* What happens when the pitch wheel changes position */
     void pitchWheelMoved (int newPitchWheelValue)
     {
+        // bad math
         frequency = frequency + 50.0;
     }
     
@@ -193,6 +214,9 @@ class SynthVoice : public SynthesiserVoice
     
     private:
         
+        float newVol;
+        MidiBuffer processedBuffer;
+    
         double level;
         double frequency;
         int theWave;
