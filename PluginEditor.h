@@ -5,6 +5,7 @@
 #include "Oscillator.h"
 #include "Envelope.h"
 #include "Filter.h"
+#include "resources/pngBinaries.h"
 
 //==============================================================================
 /**
@@ -27,6 +28,9 @@ private:
     Oscillator oscGui;
     Envelope envGui;
     Filter filterGui;
+
+    // images
+    Image image_background1_png;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthFrameworkAudioProcessorEditor)
 };

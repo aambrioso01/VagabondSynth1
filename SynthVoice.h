@@ -41,6 +41,8 @@ class SynthVoice : public SynthesiserVoice
     {
         newVol = *volume;
         
+        cout << (newVol);
+
         processedBuffer.clear();
 
         MidiBuffer::Iterator it(midiMessages);
@@ -51,8 +53,9 @@ class SynthVoice : public SynthesiserVoice
 		{
 			if (currentMessage.isNoteOn())
 			{
-				currentMessage = MidiMessage::noteOn(currentMessage.getChannel(), currentMessage.getNoteNumber(), newVol);
-			}
+				//currentMessage = MidiMessage::noteOn(currentMessage.getChannel(), currentMessage.getNoteNumber(), newVol);
+                currentMessage.setVelocity(newVol);
+            }
 			else if (currentMessage.isNoteOff())
 			{
 			}

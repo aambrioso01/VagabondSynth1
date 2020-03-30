@@ -9,6 +9,9 @@ SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFra
     // editor's size to whatever you need it to be.
     setSize (800, 300);
     
+    //images
+    image_background1_png = ImageCache::getFromMemory(pngBinaries::background1_png, pngBinaries::background1_pngSize);
+
     addAndMakeVisible(&oscGui);
     addAndMakeVisible(&envGui);
     addAndMakeVisible(&filterGui);
@@ -22,7 +25,7 @@ SynthFrameworkAudioProcessorEditor::~SynthFrameworkAudioProcessorEditor()
 //==============================================================================
 void SynthFrameworkAudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll(Colours::black);
+    g.drawImage(image_background1_png, 0, 0, 800, 300, 0, 0, 2500, 1668);
 }
 
 void SynthFrameworkAudioProcessorEditor::resized()

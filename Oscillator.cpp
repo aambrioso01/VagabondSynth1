@@ -21,29 +21,27 @@ Oscillator::Oscillator(SynthFrameworkAudioProcessor& p) : processor(p)
     
     waveSelection = new AudioProcessorValueTreeState::ComboBoxAttachment (processor.state, "wavetype", oscMenu);
     
-    
+    /*
     // default volume knob
     midiVolume.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    midiVolume.setRange(0.0, 1.0, 0.01);
+    midiVolume.setRange(0.0, 127.0, 1.0);
     midiVolume.setTextBoxStyle (Slider::NoTextBox, false, 90, 0);
     midiVolume.setPopupDisplayEnabled (true, false, this);
-    midiVolume.setValue(1.0);
+    //midiVolume.setValue(1.0);
     addAndMakeVisible (&midiVolume);
     volVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "volume", midiVolume);
-    midiVolume.setSkewFactorFromMidPoint(0.3);
-    
+    midiVolume.setSkewFactorFromMidPoint(80);
+    */
 
-    /*
+    
     // custom knobs JARVIS
-    addAndMakeVisible(midiVolume = new Slider("Volume"));
-    midiVolume->setLookAndFeel(&dirtyLookAndFeel1);
-    midiVolume->setSliderStyle(Slider::Rotary);
-    midiVolume->setTextBoxStyle(Slider::TextBoxBelow, false, 45, 16);
-    volVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "volume", *midiVolume);
+    addAndMakeVisible(midiVolume);
+    midiVolume.setLookAndFeel(&dirtyLookAndFeel1);
+    midiVolume.setSliderStyle(Slider::Rotary);
+    midiVolume.setTextBoxStyle(Slider::TextBoxBelow, false, 45, 16);
+    volVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "volume", midiVolume);
     
-    //images
-    image_background1_png = ImageCache::getFromMemory(pngBinaries::background1_png, pngBinaries::background1_pngSize);
-
+    
     /* harmonizer on/off button
     addAndMakeVisible(&harmonButton);
     harmonButton.setButtonText("Harmonzier");
@@ -62,7 +60,7 @@ Oscillator::~Oscillator()
 
 void Oscillator::paint (Graphics& g)
 {
-    g.drawImage(image_background1_png, 0, 0, 600, 400, 0, 0, 2500, 1668);
+    
 }
 
 void Oscillator::resized()
@@ -71,10 +69,11 @@ void Oscillator::resized()
     
     oscMenu.setBounds(area.removeFromTop(20));
     
-    //int sKnobSize = 64;
+    int sKnobSize = 64;
 
-    midiVolume.setBounds (area.removeFromTop(100));
+    //midiVolume.setBounds (area.removeFromTop(100));
     //midiVolume->setBounds(50 - sKnobSize / 2, 300, sKnobSize, sKnobSize);
+    midiVolume.setBounds(75, 75, sKnobSize, sKnobSize);
 }
 
 void Oscillator::comboBoxChanged(ComboBox* box)

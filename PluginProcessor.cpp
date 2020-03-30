@@ -46,8 +46,8 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     state.createAndAddParameter("filterRes", "FilterRes", "filterRes", resVal, 1, nullptr, nullptr);
     
     // volume slider
-    NormalisableRange<float> volVal(0.0, 1.0);
-    state.createAndAddParameter("volume", "Volume", "volume", volVal, 0.5, nullptr, nullptr);
+    NormalisableRange<float> volVal(0.0, 127.0);
+    state.createAndAddParameter("volume", "Volume", "volume", volVal, 80, nullptr, nullptr);
     
     mySynth.clearVoices();
     

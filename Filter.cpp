@@ -39,7 +39,6 @@ void Filter::paint (Graphics& g)
 {
     Rectangle<int> titleArea (0, 10, getWidth(), 20);
     
-    g.fillAll(Colours::black);
     g.setColour(Colours::white);
     g.drawText("Filter", titleArea, Justification::centredTop);
     
