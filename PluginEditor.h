@@ -29,6 +29,10 @@ private:
     Envelope envGui;
     Filter filterGui;
 
+    Oscillator oscGui1;
+    Envelope envGui1;
+    Filter filterGui1;
+
     // images
     Image image_background1_png;
     

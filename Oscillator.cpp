@@ -34,11 +34,11 @@ Oscillator::Oscillator(SynthFrameworkAudioProcessor& p) : processor(p)
     */
 
     
-    // custom knobs JARVIS
+    // custom knobs and attachment
     addAndMakeVisible(midiVolume);
-    midiVolume.setLookAndFeel(&dirtyLookAndFeel1);
+    midiVolume.setLookAndFeel(&oscLookAndFeel);
     midiVolume.setSliderStyle(Slider::Rotary);
-    midiVolume.setTextBoxStyle(Slider::TextBoxBelow, false, 45, 16);
+    midiVolume.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
     volVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "volume", midiVolume);
     
     

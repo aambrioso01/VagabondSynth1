@@ -6,6 +6,7 @@ Filter::Filter(SynthFrameworkAudioProcessor& p) : processor(p)
 {
     setSize(200,200);
     
+    // menu items and attachment
     filterMenu.addItem("Low Pass", 1);
     filterMenu.addItem("High Pass", 2);
     filterMenu.addItem("Band Pass", 3);
@@ -14,20 +15,25 @@ Filter::Filter(SynthFrameworkAudioProcessor& p) : processor(p)
     
     filterTypeVal = new AudioProcessorValueTreeState::ComboBoxAttachment (processor.state, "filterType", filterMenu);
     
-    filterCutoff.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+
+    // customs knobs and attachments
+    addAndMakeVisible(&filterCutoff);
+    //filterCutoff.setLookAndFeel(&filterLookAndFeel);
+    filterCutoff.setSliderStyle(Slider::Rotary);
     filterCutoff.setRange(20.0, 2000.0);
     filterCutoff.setValue(400.0);
     filterCutoff.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-    addAndMakeVisible(&filterCutoff);
-    filterVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "filterCutoff", filterCutoff);
     // defines logarithmic increment
     filterCutoff.setSkewFactorFromMidPoint(800.0);
-    
-    filterRes.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+       
+    addAndMakeVisible(&filterRes);
+    //filterRes.setLookAndFeel(&filterLookAndFeel);
+    filterRes.setSliderStyle(Slider::Rotary);
     filterRes.setRange(1, 5);
     filterRes.setValue(1);
     filterRes.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-    addAndMakeVisible(&filterRes);
+    
+    filterVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "filterCutoff", filterCutoff);
     resVal = new AudioProcessorValueTreeState::SliderAttachment(processor.state, "filterRes", filterRes);
 }
 

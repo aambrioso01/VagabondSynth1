@@ -35,7 +35,7 @@ private:
     ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> volVal;
   
     //instance of look and feel with custom png: knob1
-    DirtyLookAndFeel1 dirtyLookAndFeel1;
+    DirtyLookAndFeel1 oscLookAndFeel;
     
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

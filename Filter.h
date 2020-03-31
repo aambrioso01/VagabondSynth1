@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+//#include "sliders/DirtyLookAndFeel1.h"
 
 //==============================================================================
 /*
@@ -25,6 +26,9 @@ private:
     ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeVal;
     ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> filterVal;
     ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> resVal;
+
+    //instance of look and feel with custom png: knob1
+    //DirtyLookAndFeel1 filterLookAndFeel;
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
