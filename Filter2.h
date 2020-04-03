@@ -7,25 +7,25 @@
 //==============================================================================
 /*
 */
-class Filter    : public Component
+class Filter2    : public Component
 {
 public:
-    Filter(SynthFrameworkAudioProcessor&);
-    ~Filter();
+    Filter2(SynthFrameworkAudioProcessor&);
+    ~Filter2();
 
     void paint (Graphics&) override;
     void resized() override;
 
 private:
 
-    Slider filterCutoff;
-    Slider filterRes;
+    Slider filterCutoff2;
+    Slider filterRes2;
     
-    ComboBox filterMenu;
+    ComboBox filterMenu2;
     
-    ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeVal;
-    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> filterVal;
-    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> resVal;
+    ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment> filterTypeVal2;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> filterVal2;
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment> resVal2;
 
     //instance of look and feel with custom png: knob1
     DirtyLookAndFeel1 filterLookAndFeel;
@@ -34,5 +34,5 @@ private:
     // access the processor object that created it.
     SynthFrameworkAudioProcessor& processor;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Filter)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Filter2)
 };

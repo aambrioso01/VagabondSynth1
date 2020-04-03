@@ -22,7 +22,7 @@ class SynthVoice : public SynthesiserVoice
     
     double setEnvelope ()
     {
-        return env1.adsr(setOscType(), env1.trigger);
+        return env1.adsr((setOscType()), env1.trigger);
     }
 
     void getOscType (std::atomic<float>* selection)
@@ -37,10 +37,12 @@ class SynthVoice : public SynthesiserVoice
         resonance = *filterRes;
     }
     
+    
     void getOscVolume (std::atomic<float>* volume, MidiBuffer& midiMessages)
     {
-        newVol = *volume;
-        
+        newVol = double(*volume);
+    }
+    /*
         cout << (newVol);
 
         processedBuffer.clear();
@@ -98,8 +100,9 @@ class SynthVoice : public SynthesiserVoice
         }
  
         midiMessages.swapWith (processedMidi);
-        */
+        
     }
+    */
     
     double setOscType ()
     {
@@ -118,7 +121,8 @@ class SynthVoice : public SynthesiserVoice
             return osc1.square(frequency);
         }
         
-        // combo oscillators need work, sounds bad
+        // combo oscillators need work
+        // sinSquare does avg and others do nothing
         if (theWave == 3)
         {
             return osc1.sinSquare(frequency);
@@ -198,26 +202,53 @@ class SynthVoice : public SynthesiserVoice
         
     }
     
+
+    //void renderNextBlock(AudioBuffer<float>&, int, int, std::atomic<float>*) override;
+    /*
+    void renderNextBlock(AudioBuffer<float>& outputBuffer, int startSample, int numSamples)
+    {
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
+        {
+            float* channelData = outputBuffer.getWritePointer(channel);
+
+            //JARVIS AUDIO PROCESSING
+            for (int sample = 0; sample < outputBuffer.getNumSamples(); sample++)
+            {
+                float cleanSig = *channelData;
+
+                *channelData *= drive * input;
+
+                *channelData = ((((2.f / float_Pi) * atan(*channelData) * blend) + (cleanSig * (1.f - blend))) / 2.f) * output;
+
+                ++channelData;
+            }
+        }
+    }
+    */
+
+    // OLD NEXT BLOCK
     void renderNextBlock (AudioBuffer<float> &outputBuffer, int startSample, int numSamples)
     {
-       
+
         for (int sample = 0; sample < numSamples; ++ sample)
         {
             
             for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
             {
-                    outputBuffer.addSample(channel, startSample, setEnvelope() * 0.3f);
+                    outputBuffer.addSample(channel, startSample, setEnvelope());
             }
             
             ++startSample;
         }   
     }
     
+    
+    
     //=============================================
     
     private:
         
-        float newVol;
+        double newVol;
         MidiBuffer processedBuffer;
     
         double level;
@@ -229,6 +260,7 @@ class SynthVoice : public SynthesiserVoice
         float resonance;
         
         maxiOsc osc1;
+        maxiOsc osc2;
         maxiEnv env1;
         //maxiFilter filter1;
 

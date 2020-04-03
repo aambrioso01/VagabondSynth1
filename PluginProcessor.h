@@ -64,6 +64,8 @@ private:
     SynthVoice* myVoice;
     
     double rawVolume;
+
+    float newVol;
     
     dsp::ProcessorDuplicator<dsp::StateVariableFilter::Filter<float> , dsp::StateVariableFilter::Parameters<float>> stateVariableFilter;
     

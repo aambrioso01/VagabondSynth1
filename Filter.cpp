@@ -18,7 +18,7 @@ Filter::Filter(SynthFrameworkAudioProcessor& p) : processor(p)
 
     // customs knobs and attachments
     addAndMakeVisible(&filterCutoff);
-    //filterCutoff.setLookAndFeel(&filterLookAndFeel);
+    filterCutoff.setLookAndFeel(&filterLookAndFeel);
     filterCutoff.setSliderStyle(Slider::Rotary);
     filterCutoff.setRange(20.0, 2000.0);
     filterCutoff.setValue(400.0);
@@ -27,7 +27,7 @@ Filter::Filter(SynthFrameworkAudioProcessor& p) : processor(p)
     filterCutoff.setSkewFactorFromMidPoint(800.0);
        
     addAndMakeVisible(&filterRes);
-    //filterRes.setLookAndFeel(&filterLookAndFeel);
+    filterRes.setLookAndFeel(&filterLookAndFeel);
     filterRes.setSliderStyle(Slider::Rotary);
     filterRes.setRange(1, 5);
     filterRes.setValue(1);

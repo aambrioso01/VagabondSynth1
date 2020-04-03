@@ -3,8 +3,10 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Oscillator.h"
+#include "Oscillator2.h"
 #include "Envelope.h"
 #include "Filter.h"
+#include "Filter2.h"
 #include "resources/pngBinaries.h"
 
 //==============================================================================
@@ -29,9 +31,9 @@ private:
     Envelope envGui;
     Filter filterGui;
 
-    Oscillator oscGui1;
-    Envelope envGui1;
-    Filter filterGui1;
+    Oscillator2 oscGui2;
+    Envelope envGui2;
+    Filter2 filterGui2;
 
     // images
     Image image_background1_png;

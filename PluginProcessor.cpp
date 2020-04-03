@@ -36,6 +36,10 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     // Wave type combobox
     NormalisableRange<float> waveTypeParam(0, 5);
     state.createAndAddParameter("wavetype", "WaveType", "wavetype", waveTypeParam, 0, nullptr, nullptr);
+
+    // 2nd Wave type combobox
+    NormalisableRange<float> waveTypeParam2(0, 5);
+    state.createAndAddParameter("wavetype2", "WaveType2", "wavetype2", waveTypeParam2, 0, nullptr, nullptr);
     
     // filter/resonance sliders
     NormalisableRange<float> filterTypeVal(0, 2);
@@ -45,9 +49,21 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     state.createAndAddParameter("filterCutoff", "FilterCutoff", "filterCutoff", filterVal, 2000.0f, nullptr, nullptr);
     state.createAndAddParameter("filterRes", "FilterRes", "filterRes", resVal, 1, nullptr, nullptr);
     
+    // 2nd filter/resonance sliders
+    NormalisableRange<float> filterTypeVal2(0, 2);
+    NormalisableRange<float> filterVal2(20.0f, 2000.0f);
+    NormalisableRange<float> resVal2(1, 5);
+    state.createAndAddParameter("filterType2", "FilterType2", "filterType2", filterTypeVal, 0, nullptr, nullptr);
+    state.createAndAddParameter("filterCutoff2", "FilterCutoff2", "filterCutoff2", filterVal2, 2000.0f, nullptr, nullptr);
+    state.createAndAddParameter("filterRes2", "FilterRes2", "filterRes2", resVal2, 1, nullptr, nullptr);
+
     // volume slider
     NormalisableRange<float> volVal(0.0, 127.0);
     state.createAndAddParameter("volume", "Volume", "volume", volVal, 80, nullptr, nullptr);
+
+    // 2nd volume slider
+    NormalisableRange<float> volVal2(0.0, 127.0);
+    state.createAndAddParameter("volume2", "Volume2", "volume2", volVal2, 80, nullptr, nullptr);
     
     mySynth.clearVoices();
     
@@ -216,7 +232,7 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    rawVolume = 0.015;
+    rawVolume = 0.0;
     
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -229,42 +245,80 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 
         
 
+
+    
+    // retrieve modified waveforms from from SynthVoice
+    for (int i = 0; i < mySynth.getNumVoices(); i++)
+    {
+        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
+        {
+            
+            // 1st oscillator
+            myVoice->getEnvelopeParams(state.getRawParameterValue("attack"), state.getRawParameterValue("decay"), state.getRawParameterValue("sustain"), state.getRawParameterValue("release"));
+            
+            myVoice->getOscType(state.getRawParameterValue("wavetype"));
+            
+            myVoice->getOscVolume(state.getRawParameterValue("volume"), midiMessages);
+            //newVol = *state.getRawParameterValue("volume"), midiMessages;
+
+            myVoice->getFilterParams(state.getRawParameterValue("filterType"), state.getRawParameterValue("filterCutoff"), state.getRawParameterValue("filterRes"));
+        
+            
+            // 2nd oscillator
+            myVoice->getOscType(state.getRawParameterValue("wavetype2"));
+
+            //myVoice->getOscVolume(state.getRawParameterValue("volume2"), midiMessages);
+            newVol = *state.getRawParameterValue("volume2"), midiMessages;
+        
+            myVoice->getFilterParams(state.getRawParameterValue("filterType2"), state.getRawParameterValue("filterCutoff2"), state.getRawParameterValue("filterRes2"));
+
+        }
+    }
+    
+    //oscillator get next sample
+    mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+   
+    
+    updateFilter();
+    dsp::AudioBlock<float> block (buffer);
+    stateVariableFilter.process(dsp::ProcessContextReplacing<float> (block));
+
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        float* channelData = buffer.getWritePointer (channel);
+        float* channelData = buffer.getWritePointer(channel);
 
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {
             channelData[sample] = buffer.getSample(channel, sample) * rawVolume;
         }
     }
-    
-    for (int i = 0; i < mySynth.getNumVoices(); i++)
+
+    /*
+    for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        if ((myVoice = dynamic_cast<SynthVoice*>(mySynth.getVoice(i))))
+        float* channelData = buffer.getWritePointer(channel);
+
+        //JARVIS AUDIO PROCESSING
+        for (int sample = 0; sample < buffer.getNumSamples(); sample++)
         {
-            myVoice->getEnvelopeParams(state.getRawParameterValue("attack"), state.getRawParameterValue("decay"), state.getRawParameterValue("sustain"), state.getRawParameterValue("release"));
+            /*
+
+            *channelData *= 0;
+
+            ++channelData;
             
-            myVoice->getOscType(state.getRawParameterValue("wavetype"));
             
-            myVoice->getOscVolume(state.getRawParameterValue("volume"), midiMessages);
             
-            myVoice->getFilterParams(state.getRawParameterValue("filterType"), state.getRawParameterValue("filterCutoff"), state.getRawParameterValue("filterRes"));
+            buffer[sample] *= 0;
         }
-    }
-    
-    //oscillator next block
-    mySynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
-    updateFilter();
-    dsp::AudioBlock<float> block (buffer);
-    stateVariableFilter.process(dsp::ProcessContextReplacing<float> (block));
+    }*/
 }
 
 //==============================================================================

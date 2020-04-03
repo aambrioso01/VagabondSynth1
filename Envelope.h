@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-//#include "sliders/DirtyLookAndFeel1.h"
+#include "sliders/DirtyLookAndFeel1.h"
 
 //==============================================================================
 /*
@@ -28,7 +28,7 @@ private:
     Slider releaseSlider;
 
     //instance of look and feel with custom png: knob1
-    //DirtyLookAndFeel1 envLookAndFeel;
+    DirtyLookAndFeel1 envLookAndFeel;
 
 
     // This reference is provided as a quick way for your editor to

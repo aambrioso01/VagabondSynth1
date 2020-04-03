@@ -3,7 +3,7 @@
 
 //==============================================================================
 SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFrameworkAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), oscGui(p), envGui(p), filterGui(p), oscGui1(p), envGui1(p), filterGui1(p)
+    : AudioProcessorEditor (&p), processor (p), oscGui(p), envGui(p), filterGui(p), oscGui2(p), envGui2(p), filterGui2(p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -16,9 +16,9 @@ SynthFrameworkAudioProcessorEditor::SynthFrameworkAudioProcessorEditor (SynthFra
     addAndMakeVisible(&envGui);
     addAndMakeVisible(&filterGui);
 
-    addAndMakeVisible(&oscGui1);
-    addAndMakeVisible(&envGui1);
-    addAndMakeVisible(&filterGui1);
+    addAndMakeVisible(&oscGui2);
+    addAndMakeVisible(&envGui2);
+    addAndMakeVisible(&filterGui2);
     
 }
 
@@ -29,7 +29,7 @@ SynthFrameworkAudioProcessorEditor::~SynthFrameworkAudioProcessorEditor()
 //==============================================================================
 void SynthFrameworkAudioProcessorEditor::paint (Graphics& g)
 {
-    g.drawImage(image_background1_png, 0, 0, 800, 570, 0, 0, 2500, 1668);
+    g.drawImage(image_background1_png, 0, 0, 800, 570, 0, 0, 801, 571);
 }
 
 void SynthFrameworkAudioProcessorEditor::resized()
@@ -47,7 +47,7 @@ void SynthFrameworkAudioProcessorEditor::resized()
     filterGui.setBounds(synth.removeFromLeft(componentWidth).removeFromTop(componentHeight));
     envGui.setBounds(synth.removeFromLeft(componentWidth).removeFromTop(componentHeight));
 
-    oscGui1.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
-    filterGui1.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
-    envGui1.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
+    oscGui2.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
+    filterGui2.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
+    envGui2.setBounds(area.removeFromLeft(componentWidth).removeFromTop(componentHeight));
 }

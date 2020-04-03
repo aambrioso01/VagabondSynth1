@@ -4,6 +4,12 @@
     
     This class is for our first custom slider
 */
+#pragma once
+#ifndef DIRTYLOOKANDFEEL
+#define DIRTYLOOKANDFEEL
+
+
+
 #include <JuceHeader.h>
 #include "../resources/pngBinaries.h"
 
@@ -21,3 +27,4 @@ class DirtyLookAndFeel1 : public LookAndFeel_V4
 
 
 
+#endif // !DIRTYLOOKANDFEEL
