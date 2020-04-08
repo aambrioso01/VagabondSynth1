@@ -47,13 +47,14 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
+    //==============================================================================
     float attackTime;
     float decayTime;
     float sustainTime;
     float releaseTime;
     
-    //AMBRIOSO
     void updateFilter();
+    void updateFilter2();
     float noteOnVel;
     
     AudioProcessorValueTreeState state;

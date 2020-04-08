@@ -36,9 +36,9 @@ class SynthVoice : public SynthesiserVoice
         cutoff = *filterCutoff;
         resonance = *filterRes;
     }
+
     
-    
-    void getOscVolume (std::atomic<float>* volume, MidiBuffer& midiMessages)
+    void getOscVolume (std::atomic<float>* volume)
     {
         newVol = double(*volume);
     }
@@ -237,9 +237,22 @@ class SynthVoice : public SynthesiserVoice
             {
                     outputBuffer.addSample(channel, startSample, setEnvelope());
             }
-            
+   
             ++startSample;
-        }   
+        }
+
+        for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
+        {
+            float* channelData = outputBuffer.getWritePointer(channel);
+
+            //JARVIS AUDIO PROCESSING
+            for (int sample = 0; sample < outputBuffer.getNumSamples(); sample++)
+            {
+                *channelData *= newVol;
+
+                ++channelData;
+            }
+        }
     }
     
     

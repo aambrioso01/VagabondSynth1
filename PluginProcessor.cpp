@@ -62,8 +62,8 @@ SynthFrameworkAudioProcessor::SynthFrameworkAudioProcessor()
     state.createAndAddParameter("volume", "Volume", "volume", volVal, 80, nullptr, nullptr);
 
     // 2nd volume slider
-    NormalisableRange<float> volVal2(0.0, 127.0);
-    state.createAndAddParameter("volume2", "Volume2", "volume2", volVal2, 80, nullptr, nullptr);
+    NormalisableRange<float> volVal2(0.0, 1.0);
+    state.createAndAddParameter("volume2", "Volume2", "volume2", volVal2, 1.0, nullptr, nullptr);
     
     mySynth.clearVoices();
     
@@ -166,6 +166,7 @@ void SynthFrameworkAudioProcessor::prepareToPlay (double sampleRate, int samples
     stateVariableFilter.reset();
     stateVariableFilter.prepare(spec);
     updateFilter();
+    updateFilter2();
     
 }
 
@@ -225,6 +226,31 @@ void SynthFrameworkAudioProcessor::updateFilter()
     }
 }
 
+void SynthFrameworkAudioProcessor::updateFilter2()
+{
+    int menuChoice2 = *state.getRawParameterValue("filterType2");
+    int freq = *state.getRawParameterValue("filterCutoff2");
+    int res = *state.getRawParameterValue("filterRes2");
+
+    if (menuChoice2 == 0)
+    {
+        stateVariableFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::lowPass;
+        stateVariableFilter.state->setCutOffFrequency(lastSampleRate, freq, res);
+    }
+
+    if (menuChoice2 == 1)
+    {
+        stateVariableFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::highPass;
+        stateVariableFilter.state->setCutOffFrequency(lastSampleRate, freq, res);
+    }
+
+    if (menuChoice2 == 2)
+    {
+        stateVariableFilter.state->type = dsp::StateVariableFilter::Parameters<float>::Type::bandPass;
+        stateVariableFilter.state->setCutOffFrequency(lastSampleRate, freq, res);
+    }
+}
+
 void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     
@@ -258,7 +284,7 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
             
             myVoice->getOscType(state.getRawParameterValue("wavetype"));
             
-            myVoice->getOscVolume(state.getRawParameterValue("volume"), midiMessages);
+            myVoice->getOscVolume(state.getRawParameterValue("volume"));
             //newVol = *state.getRawParameterValue("volume"), midiMessages;
 
             myVoice->getFilterParams(state.getRawParameterValue("filterType"), state.getRawParameterValue("filterCutoff"), state.getRawParameterValue("filterRes"));
@@ -267,8 +293,8 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
             // 2nd oscillator
             myVoice->getOscType(state.getRawParameterValue("wavetype2"));
 
-            //myVoice->getOscVolume(state.getRawParameterValue("volume2"), midiMessages);
-            newVol = *state.getRawParameterValue("volume2"), midiMessages;
+            myVoice->getOscVolume(state.getRawParameterValue("volume2"));
+            //newVol = *state.getRawParameterValue("volume2"), midiMessages;
         
             myVoice->getFilterParams(state.getRawParameterValue("filterType2"), state.getRawParameterValue("filterCutoff2"), state.getRawParameterValue("filterRes2"));
 
@@ -280,6 +306,7 @@ void SynthFrameworkAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
    
     
     updateFilter();
+    updateFilter2();
     dsp::AudioBlock<float> block (buffer);
     stateVariableFilter.process(dsp::ProcessContextReplacing<float> (block));
 
